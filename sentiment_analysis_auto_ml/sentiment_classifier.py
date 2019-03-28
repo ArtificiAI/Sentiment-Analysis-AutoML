@@ -1,0 +1,2 @@
+class SentimentClassifier:
+    pass
