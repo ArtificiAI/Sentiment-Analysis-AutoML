@@ -13,4 +13,6 @@ if __name__ == "__main__":
     # Usage:
     X = ["Je suis un modèle pas content.", "Je suis un modèle très content."]
     y = model.predict(X)
+    y_probas = model.predict_proba(X)
     print(y.tolist())
+    print(y_probas.tolist())

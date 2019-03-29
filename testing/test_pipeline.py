@@ -3,14 +3,14 @@ from sentiment_analysis_auto_ml.pipeline_factory import NewLogisticPipelineFunct
 
 
 def test_sentiment_classifier():
-    if __name__ == "__main__":
-        # TODO: custom demo data for the test.
-        dl = DataLoader()
-        X_train, y_train = dl.load_data()
+    # TODO: custom demo data for the test.
+    dl = DataLoader()
+    X_train, y_train = dl.load_data()
 
-        best_model = NewLogisticPipelineFunctor()().set_params(**get_test_hyperparams()).fit(X_train, y_train)
-        X = ["Je suis un modèle pas content.", "Je suis un modèle très content."]
-        y = best_model.predict(X)
+    best_model = NewLogisticPipelineFunctor()().set_params(**get_test_hyperparams()).fit(X_train, y_train)
+    X = ["Je suis un modèle pas content.", "Je suis un modèle très content."]
+    y = best_model.predict(X)
+    # y = best_model.predict_proba(X)
 
-        expected_y = [0, 1]
-        assert y == expected_y
+    expected_y = [0, 1]
+    assert y.tolist() == expected_y
