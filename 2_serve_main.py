@@ -1,8 +1,7 @@
 from sklearn.pipeline import Pipeline
 
 from sentiment_analysis_auto_ml.model_checkpoint import ModelCheckpoint
-
-from sentiment_analysis_auto_ml.pipeline_factory import get_generic_hyperparams_grid, NewLogisticPipelineFunctor, PIPELINE_DEFAULT_NAME
+from sentiment_analysis_auto_ml.pipeline_factory import PIPELINE_DEFAULT_NAME
 
 if __name__ == "__main__":
     mc = ModelCheckpoint(PIPELINE_DEFAULT_NAME)

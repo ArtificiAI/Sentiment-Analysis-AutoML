@@ -33,12 +33,10 @@
 #
 from typing import Dict, Any
 
-from artifici_lda.logic.lda import LDA
 from artifici_lda.logic.stemmer import Stemmer, FRENCH
-from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.pipeline import Pipeline
 
 from sentiment_analysis_auto_ml.pipeline_steps.to_lower_case import ToLowerCase
 from sentiment_analysis_auto_ml.pipeline_steps.word_tokenizer import WordTokenizer
@@ -48,29 +46,40 @@ from sentiment_analysis_auto_ml.utils import identity
 def get_generic_hyperparams_grid():
     d = {
         'porter_stemmer__language': [FRENCH],
-        'count_vect_that_remove_unfrequent_words_and_stopwords__max_df': [0.98],
-        'count_vect_that_remove_unfrequent_words_and_stopwords__min_df': [1, 2],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__max_df': [0.9],  # [0.9, 0.95, 0.98, 0.99],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__min_df': [1],  # [1, 2],
         'count_vect_that_remove_unfrequent_words_and_stopwords__max_features': [500000],
-        'count_vect_that_remove_unfrequent_words_and_stopwords__ngram_range': [(1, 2), (1, 3), (1, 4)],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__ngram_range': [(1, 3)],  # [(1, 2), (1, 3), (1, 4)],
         'count_vect_that_remove_unfrequent_words_and_stopwords__strip_accents': [None],
         'count_vect_that_remove_unfrequent_words_and_stopwords__tokenizer': [identity],
         'count_vect_that_remove_unfrequent_words_and_stopwords__preprocessor': [None],
         'count_vect_that_remove_unfrequent_words_and_stopwords__lowercase': [False],
-        'union__lda__n_components': [10, 25, 60, 120, 300, 600],
-        'union__lda__max_iter': [200],
-        'union__lda__learning_decay': [0.5, 0.7, 0.9],
-        'union__lda__learning_method': ['online'],
-        'union__lda__n_jobs': [-1],
-        'logistic_regression__C': [1e-2, 1.0, 1e2, 1e4],
-        # 'naive_bayes_multi__alpha': [0.01, 0.1, 1.0]
+        'logistic_regression__C': [1.0]  # [0.8, 0.9, 0.95, 1.0, 1.1] # [1e-2, 1e-1, 1.0, 1e1, 1e2],
+    }
+
+    return d
+
+
+def get_small_testing_hyperparams_grid():
+    d = {
+        'porter_stemmer__language': [FRENCH],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__max_df': [0.9, 0.98],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__min_df': [1, 2],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__max_features': [500000],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__ngram_range': [(1, 2)],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__strip_accents': [None],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__tokenizer': [identity],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__preprocessor': [None],
+        'count_vect_that_remove_unfrequent_words_and_stopwords__lowercase': [False],
+        'logistic_regression__C': [1.0, 1.1],
     }
     return d
 
 
-def get_test_hyperparams() -> Dict[str, Any]:
+def get_small_testing_hyperparams() -> Dict[str, Any]:
     d = {
         'porter_stemmer__language': FRENCH,
-        'count_vect_that_remove_unfrequent_words_and_stopwords__max_df': 0.98,
+        'count_vect_that_remove_unfrequent_words_and_stopwords__max_df': 0.9,
         'count_vect_that_remove_unfrequent_words_and_stopwords__min_df': 2,
         'count_vect_that_remove_unfrequent_words_and_stopwords__max_features': 5000,
         'count_vect_that_remove_unfrequent_words_and_stopwords__ngram_range': (1, 2),
@@ -78,26 +87,9 @@ def get_test_hyperparams() -> Dict[str, Any]:
         'count_vect_that_remove_unfrequent_words_and_stopwords__tokenizer': identity,
         'count_vect_that_remove_unfrequent_words_and_stopwords__preprocessor': None,
         'count_vect_that_remove_unfrequent_words_and_stopwords__lowercase': False,
-        'union__lda__n_components': 10,
-        'union__lda__max_iter': 10,
-        'union__lda__learning_decay': 0.7,
-        'union__lda__learning_method': 'online',
-        'union__lda__n_jobs': -1,
         'logistic_regression__C': 1.0,
-        # 'naive_bayes_multi__alpha': [0.01, 0.1, 1.0]
     }
     return d
-
-
-class Id(BaseEstimator, TransformerMixin):
-    def fit_transform(self, X, y=None, **fit_params):
-        return X
-
-    def fit(self, X, y):
-        return self
-
-    def transform(self, X, y=None):
-        return X
 
 
 class NewLogisticPipelineFunctor:
@@ -111,17 +103,12 @@ class NewLogisticPipelineFunctor:
 
         # Transformers
         steps += [('porter_stemmer', Stemmer())]
-        steps += [('nltk_tokenizer', WordTokenizer())]
+        steps += [('tokenizer', WordTokenizer())]
         steps += [('to_lower_case', ToLowerCase())]
         steps += [('count_vect_that_remove_unfrequent_words_and_stopwords', CountVectorizer())]
-        steps += [('union', FeatureUnion([
-            ('id', Id()),
-            ('lda', LDA())
-        ]))]
 
         # Classifier
         steps += [('logistic_regression', LogisticRegression())]
-        # steps += [('naive_bayes_multi', MultinomialNB())]
 
         return Pipeline(steps)
 

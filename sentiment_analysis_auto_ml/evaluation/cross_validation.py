@@ -45,9 +45,10 @@ def cross_validate(new_pipeline_funct, hyperparams_grid, X_train, y_train, name,
 
     pipeline = new_pipeline_funct()
 
+    count = min(4, multiprocessing.cpu_count())
     grid_search = GridSearchCV(
-        pipeline, hyperparams_grid, iid=True, cv=n_folds, return_train_score=False, verbose=False, scoring="accuracy",
-        n_jobs=multiprocessing.cpu_count(), pre_dispatch=multiprocessing.cpu_count() * 2
+        pipeline, hyperparams_grid, iid=True, cv=n_folds, return_train_score=False, verbose=verbose, scoring="accuracy",
+        n_jobs=count, pre_dispatch=count * 2
     )
     grid_search.fit(X_train, y_train)
 
@@ -64,7 +65,7 @@ def get_fitted_best_classifier_from_cross_validation(
     """
     Return a new `new_pipeline_funct` trained on the data with the best hyperparameters.
     """
-    best_params = cross_validate(new_pipeline_funct, hyperparams_grid, X_train, y_train, name, verbose=True)
+    best_params = cross_validate(new_pipeline_funct, hyperparams_grid, X_train, y_train, name, verbose=verbose)
     if verbose:
         print(best_params)
         print("")

@@ -1,5 +1,5 @@
 from sentiment_analysis_auto_ml.data_loader import DataLoader
-from sentiment_analysis_auto_ml.pipeline_factory import NewLogisticPipelineFunctor, get_test_hyperparams
+from sentiment_analysis_auto_ml.pipeline_factory import NewLogisticPipelineFunctor, get_small_testing_hyperparams
 
 
 def test_sentiment_classifier():
@@ -7,7 +7,7 @@ def test_sentiment_classifier():
     dl = DataLoader()
     X_train, y_train = dl.load_data()
 
-    best_model = NewLogisticPipelineFunctor()().set_params(**get_test_hyperparams()).fit(X_train, y_train)
+    best_model = NewLogisticPipelineFunctor()().set_params(**get_small_testing_hyperparams()).fit(X_train, y_train)
     X = ["Je suis un modèle pas content.", "Je suis un modèle très content."]
     y = best_model.predict(X)
     # y = best_model.predict_proba(X)
