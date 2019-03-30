@@ -21,9 +21,9 @@ class DataLoader:
             1,No, I don't like potatoes
             1,Nope.
             0,This is awesome, I want more of this, there are many commas in this sentence and I don't care.
-            2.This 2nd sentiment is probably nostalgy. It is what you want it to be maybe.
-            3.You can even have more sentiments: just change the number at the beginning.
-            3.And be sure you have enough data for each sentiment.
+            2,This 2nd sentiment is probably nostalgy. It is what you want it to be maybe.
+            3,You can even have more sentiments: just change the number at the beginning.
+            3,And be sure you have enough data for each sentiment.
 
         :return: a tuple of (X, y), they are two lists: "X" is a list of string, "y" is a list of their integer labels
         """
