@@ -4,7 +4,7 @@ pytest-cov==2.6.1
 
 # Reusing components from the LDA repository like "from artifici_lda import ...":
 git+https://github.com/ArtificiAI/Multilingual-Latent-Dirichlet-Allocation-LDA@1.0#egg=artifici_lda
-numpy==1.14.3
+numpy==1.22.0
 SciPy==1.5.2
 scikit-learn==0.19.1
 
